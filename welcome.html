@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ super() }} - Welcome{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    <h2 style="text-align:center;">Welcome to the Learning Journal</h2>
+    <br>
+    <p style="text-align:center;">
+        To view your journal, please <a href="{{ url_for('login') }}">login.</a>  Or <a href="{{ url_for('register') }}">register</a>
+    </p>
+{% endblock %}
