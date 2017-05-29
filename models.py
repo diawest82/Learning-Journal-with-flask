@@ -6,6 +6,7 @@ from peewee import *
 
 DATABASE = SqliteDatabase('journal.db')
 
+
 class User(UserMixin, Model):
     username = CharField(unique=True)
     password = CharField(max_length=100)
@@ -26,13 +27,21 @@ class User(UserMixin, Model):
         except IntegrityError:
             raise ValueError("User already exists")
 
-    def get_journal(self):
+    def get_tags(self, tags):
+        """Get tags entries for a user"""
+        return BlogEntry.select().where(
+            (BlogEntry.user == self) & BlogEntry.tags.contains(tags)
+        )
+
+    def get_entry(self):
         """Get journal entries for a user"""
-        return
+        return BlogEntry.select().where(BlogEntry.user == self)
+
 
 class BaseModel(UserMixin, Model):
     class Meta:
         database = DATABASE
+
 
 class BlogEntry(BaseModel):
     pk = PrimaryKeyField()
@@ -42,15 +51,17 @@ class BlogEntry(BaseModel):
     learned = TextField()
     resources = TextField()
     tags = CharField(default='')
-    user = CharField()
-    slug = CharField()
+    user = ForeignKeyField(
+        rel_model=User,
+        related_name='journal'
+    )
 
     class Meta:
         order_by = ('-date',)
 
     @classmethod
     def create_entry(cls, title, date, time_spent, learned,
-                     resources, tags, user, slug):
+                     resources, tags, user):
         with DATABASE.transaction():
             cls.create(title=title,
                        date=date,
@@ -58,12 +69,10 @@ class BlogEntry(BaseModel):
                        learned=learned,
                        resources=resources,
                        tags=tags,
-                       user=user,
-                       slug=slug
-                      )
+                       user=user,)
 
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([User, BlogEntry,], safe=True)
+    DATABASE.create_tables([User, BlogEntry], safe=True)
     DATABASE.close()
