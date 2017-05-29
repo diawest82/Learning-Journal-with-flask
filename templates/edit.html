@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% from 'macros.html' import render_field %}
+
+{% block title %}{{ super() }} - Edit Journal{% endblock %}
+
+{% block content %}
+{% if entry %}
+    <div class="edit-entry">
+        <h2>Edit Entry</h2>
+        <form class="form" method="POST" action=''>
+            {{ form.hidden_tag() }}
+            <label for="title"> Title</label>
+            {{ render_field(form.title) }}<br>
+            <label for="date">Date</label>
+            {{ render_field(form.date) }}<br>
+            <label for="time-spent"> Time Spent</label>
+            {{ render_field(form.time_spent) }}<br>
+            <label for="what-i-learned">What I Learned</label>
+            {{ render_field(form.learned) }}
+            <label for="resources-to-remember">Resources to Remember</label>
+            {{ render_field(form.resources) }}<br>
+            <label for="tags">Tags</label>
+            {{ render_field(form.tags) }}<br>
+            <input type="submit" value="Publish Entry" class="button">
+            <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
+        </form>
+    </div>
+{% else %}
+    <h2>There aren't any entries yet!</h2>
+{% endif %}
+{% endblock %}
