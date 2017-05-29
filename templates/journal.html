@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ super() }} - Home{% endblock %}
+
+{% block header %}
+<a href="{{ url_for('new') }}">New</a>
+{% endblock %}
+
+
+{% block content %}
+
+{% if stream %}
+<h1>{{ user.username }}'s Journal</h1><br>
+    {% if tags %}
+    <h3 style="text-align:center">Here are your entries with the <u>{{ tags }}</u> tag!</h3>
+    {% else %}
+    <h3 styel="text-align:center">Here are your most recent entries</h3>
+    {% endif %}
+        <article>
+            {% for entry in stream %}
+                <div>
+                    <h2><a href="{{ url_for('detail', blogid=entry.pk, slug=entry.title|slugify) }}">{{ entry.title|title }}</a></h2>
+                    <p>
+                            <i class="clock"></i><time data-time="{{ entry.date }}" class="distime" datetime="{{ entry.date.strftime('%Y-%m-%d %h:%M:%S') }}">{{ entry.date.strftime('%B %d, %Y') }}</time></p>
+                    <p>
+                        Tags:
+                        {% for tag in entry.tags|split_string %}
+                            <a href="{{ url_for('tags', tags=tag) }}">{{ tag }}</a>
+                        {% endfor %}
+                    </p>
+                </div>
+            {% endfor %}
+        </article>
+{% else %}
+    <h2 style="text-align:center;">Welcome {{ user.username }} to your new Journal!</h2>
+    <p style="text-align:center;">Click new entry at the top to get started</p>
+{% endif %}
+{% endblock %}
